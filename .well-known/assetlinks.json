@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ultimate.finturepay.test",
+      "sha256_cert_fingerprints": [
+        "4C:7B:27:CF:D4:19:CB:F8:A7:AD:96:36:88:A5:AA:5E:08:FA:9F:37:39:BA:8A:22:B8:C3:71:5A:14:ED:8C:D9",
+        "4B:82:63:91:C0:6A:8F:DC:49:AD:45:7B:F6:07:1D:D3:13:E9:FF:D3:B4:97:C7:82:B0:E4:9F:B6:BC:81:E5:2D"
+      ]
+    }
+  }
+]
