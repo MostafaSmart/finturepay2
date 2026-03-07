@@ -1,9 +1,9 @@
 <?php
 // بيانات الاتصال بقاعدة البيانات
-$DB_HOST = "sql112.yzz.me";
-$DB_USER = "yzzme_41332687";
-$DB_PASS = "777296572mosmos";
-$DB_NAME = "yzzme_41332687_app_link";
+$DB_HOST = "sql308.infinityfree.com";
+$DB_USER = "if0_41325439";
+$DB_PASS = "777296572MosMos";
+$DB_NAME = "if0_41325439_XXX";
 $DB_PROT = 3306;
 
 // إنشاء الاتصال
