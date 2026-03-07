@@ -15,14 +15,20 @@ $ip = $_SERVER['REMOTE_ADDR'] ?? '';
 $is_ios = preg_match('/iPhone|iPad|iPod/', $user_agent);
 $is_android = preg_match('/Android/', $user_agent);
 
-// تسجيل الدعوة في قاعدة البيانات
-$stmt = $conn->prepare("
-    INSERT INTO invite_log (invite_code, device_fingerprint, ip, user_agent)
-    VALUES (?, NULL, ?, ?)
-");
-$stmt->bind_param("sss", $invite_code, $ip, $user_agent);
-$stmt->execute();
-$stmt->close();
+// تسجيل الدعوة في قاعدة البيانات باستخدام PDO
+try {
+    $stmt = $pdo->prepare("
+        INSERT INTO invite_log (invite_code, device_fingerprint, ip, user_agent)
+        VALUES (:code, NULL, :ip, :ua)
+    ");
+    $stmt->execute([
+        ':code' => $invite_code,
+        ':ip'   => $ip,
+        ':ua'   => $user_agent
+    ]);
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
+}
 
 // تحويل المستخدم حسب نوع الجهاز
 if ($is_android) {

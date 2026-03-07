@@ -15,17 +15,15 @@ if (!$fingerprint) {
 $ip = $_SERVER['REMOTE_ADDR'] ?? '';
 
 // البحث عن آخر invite بدون fingerprint لهذا الجهاز (حسب IP فقط)
-$stmt = $conn->prepare("
+$stmt = $pdo->prepare("
     SELECT id, invite_code
     FROM invite_log
-    WHERE device_fingerprint IS NULL AND ip = ?
-    ORDER BY id DESC LIMIT 1
+    WHERE device_fingerprint IS NULL AND ip = :ip
+    ORDER BY id DESC
+    LIMIT 1
 ");
-$stmt->bind_param("s", $ip);
-$stmt->execute();
-$result = $stmt->get_result();
-$row = $result->fetch_assoc();
-$stmt->close();
+$stmt->execute([':ip' => $ip]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // إذا وجد invite
 $code = '';
@@ -33,12 +31,13 @@ if ($row) {
     $code = $row['invite_code'];
 
     // تحديث السطر وربط Fingerprint
-    $stmt2 = $conn->prepare("
-        UPDATE invite_log SET device_fingerprint = ? WHERE id = ?
+    $stmt2 = $pdo->prepare("
+        UPDATE invite_log SET device_fingerprint = :fp WHERE id = :id
     ");
-    $stmt2->bind_param("si", $fingerprint, $row['id']);
-    $stmt2->execute();
-    $stmt2->close();
+    $stmt2->execute([
+        ':fp' => $fingerprint,
+        ':id' => $row['id']
+    ]);
 }
 
 // ======= تجاوز صفحة Anti-Bot إذا أرسل i=1 =======
