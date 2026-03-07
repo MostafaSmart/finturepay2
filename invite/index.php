@@ -17,7 +17,8 @@ $is_android = preg_match('/Android/', $user_agent);
 try {
     $stmt = $pdo->prepare("INSERT INTO invite_log (invite_code, ip, user_agent, created_at) VALUES (:code, :ip, :ua, NOW())");
     $stmt->execute([':code' => $invite_code, ':ip' => $ip, ':ua' => $user_agent]);
-} catch (PDOException $e) { }
+} catch (PDOException $e) {
+}
 
 // 3. منطق التحويل (Redirect Logic)
 if ($is_android) {
@@ -34,51 +35,84 @@ $appstore_url = "https://apps.apple.com/app/idXXXXXXXXX?pt=123&ct=" . urlencode(
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finture Pay - قبول الدعوة</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 40px 20px; background-color: #f8f9fa; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        .btn { background: #1a73e8; color: white; padding: 15px 25px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; width: 100%; }
-        .code-display { font-size: 1.5em; color: #1a73e8; font-weight: bold; margin: 15px 0; }
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .btn {
+            background: #1a73e8;
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .code-display {
+            font-size: 1.5em;
+            color: #1a73e8;
+            font-weight: bold;
+            margin: 15px 0;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="card">
-    <h2>أهلاً بك في Finture Pay</h2>
-    <p>لقد تمت دعوتك بواسطة الكود:</p>
-    <div class="code-display"><?php echo htmlspecialchars($invite_code); ?></div>
-    
-    <button id="copyAndGo" class="btn">نسخ الكود وتحميل التطبيق</button>
-    <p style="font-size: 0.8em; color: #666; margin-top: 15px;">سيتم نسخ الكود تلقائياً لتسهيل عملية التسجيل</p>
-</div>
+    <div class="card">
+        <h2>أهلاً بك في Finture Pay</h2>
+        <p>لقد تمت دعوتك بواسطة الكود:</p>
+        <div class="code-display"><?php echo htmlspecialchars($invite_code); ?></div>
 
-<script>
-    document.getElementById('copyAndGo').addEventListener('click', function() {
-        const code = "<?php echo $invite_code; ?>";
-        const iosUrl = "<?php echo $appstore_url; ?>";
+        <button id="copyAndGo" class="btn">نسخ الكود وتحميل التطبيق</button>
+        <p style="font-size: 0.8em; color: #666; margin-top: 15px;">سيتم نسخ الكود تلقائياً لتسهيل عملية التسجيل</p>
+    </div>
 
-        // محاولة النسخ
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(code).then(redirect);
-        } else {
-            const el = document.createElement('textarea');
-            el.value = code;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            redirect();
-        }
+    <script>
+        document.getElementById('copyAndGo').addEventListener('click', function () {
+            // جلب الرابط الكامل الحالي للصفحة
+            const fullUrl = window.location.href;
+            const iosUrl = "<?php echo $appstore_url; ?>";
 
-        function redirect() {
-            setTimeout(() => { window.location.href = iosUrl; }, 500);
-        }
-    });
-</script>
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(fullUrl).then(redirect);
+            } else {
+                const el = document.createElement('textarea');
+                el.value = fullUrl;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                redirect();
+            }
+
+            function redirect() {
+                setTimeout(() => { window.location.href = iosUrl; }, 500);
+            }
+        });
+    </script>
 
 </body>
+
 </html>
